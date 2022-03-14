@@ -36,10 +36,9 @@ print(max_score)
 max_score_id_lst = []
 
 # 최고 성적을 받은 id를 리스트에 담습니다.
-i = 0
-while max_score == score_lst[i][0]:
-    max_score_id_lst.append(score_lst[i][1])
-    i += 1
+for i in range(n):
+    if max_score == score_lst[i][0]:
+        max_score_id_lst.append(score_lst[i][1])
 
 # 받은 리스트를 정렬하여 출력합니다.
 max_score_id_lst.sort()
@@ -49,7 +48,7 @@ for elem in max_score_id_lst:
 
 
 '''
-# [문제 수정 전]
+[수정 전 문제의 코드입니다. 만일을 위해 주석으로 남깁니다.]
 
 # 입력값을 각각의 배열에 담습니다.
 ans = list(map(int, input().split()))

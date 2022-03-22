@@ -15,8 +15,8 @@ int main(void)
 
   // Multiply the first sum by 3 and add it to the second sum.
   total = (first_sum * 3) + second_sum;
-  // Subtract 1 and compute the remainder from the total.
-  // Then subtract the remainder from 9.
+  // Subtract 1 from the total and compute the remainder (when the adjudted total is divided by ten).
+  // Then, subtract the remainder from 9.
   check_digit = 9 - ((total - 1) % 10);
 
   printf("Check digit: %d", check_digit);

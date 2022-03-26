@@ -3,18 +3,18 @@
 
 int main(void)
 {
+    int cmd;
     int num;
-
-    printf("");
-    scanf("%d", &num);
 
     while(1)
     {
-
+    printf("Enter Command : ");
+    scanf("%d", &cmd);
     
-        switch(num)
+        switch(cmd)
         {
             case 1:
+            {
                 int i = 1;
                 while (i < 1000) {
                     if (i % 2 == 0)
@@ -22,9 +22,10 @@ int main(void)
                     i++;
                 }
                 break;
-
+            }
 
             case 2:
+            {
                 int i = 1;
                 while (i < 1000) {
                     if (i % 2 == 1)
@@ -32,23 +33,26 @@ int main(void)
                     i++;
                 }
                 break;
-
+            }
 
             case 3:
+            {
                 int n;
                 int i = 2;
                 bool is_prime = true;
 
+                printf("Enter n : ");
                 scanf("%d", &n);
 
-                if(i == 1)
-                    printf("n is NOT a prime number.");
+                if(n == 1) {
+                    printf("n is NOT a prime number.\n");
                     break;
-                if(i == 2)
-                    printf("n is a prime number.");
+                }
+                if(n == 2) {
+                    printf("n is a prime number.\n");
                     break;
-                
-                while(i <= n) {
+                }
+                while(i < n) {
                     if (n % i == 0) {
                         is_prime = false;
                         break;
@@ -57,55 +61,63 @@ int main(void)
                 }
 
                 if(is_prime)
-                    printf("n is a prime number.");
+                    printf("n is a prime number.\n");
                 else
-                    printf("n is NOT a prime number.");
+                    printf("n is NOT a prime number.\n");
                 break;
-
+            }
 
             case 4:
+            {
                 int n, m;
                 int i;
-                scanf("%d %d", &n, &m);
+                bool is_prime;
+
+                printf("Enter n : ");
+                scanf("%d", &n);
+                printf("Enter m : ");
+                scanf("%d", &m);
 
                 while (n <= m)
                 {
-                    if(n == 1)
-                    {
-                        printf("n is NOT a prime number.");
-                        n++;
-                        continue;
-                    }
-
-                    if(n == 2)
-                    {
-                        printf("%d\n", n);
-                        n++;
-                        continue;
-                    }
-
+                    is_prime = true;
                     i = 2;
-                    while(i <= n)
+
+                    if(n == 1) {
+                        n++;
+                        break;
+                    }
+
+                    if(n == 2) {
+                        n++;
+                        break;
+                    }
+
+                    while(i < n)
                     {
                         if (n % i == 0)
                         {
-                            n++;
+                            is_prime = false;
                             break;
                         }
                         i++;
                     }
-                    printf("%d\n", n);
+
+                    if(is_prime)
+                        printf("%d\n", n);
+
                     n++;
                 }
                 break;
-
+            }
 
             case 5:
+            {
                 int n;
                 int i = 1;
                 float fact = 1.0;
 
-                print("");
+                printf("Enter n : ");
                 scanf("%d", &n);
 
                 while(i <= n)
@@ -114,17 +126,20 @@ int main(void)
                     i++;
                 }
 
-                print("%.2f", fact);
+                printf("%.2f", fact);
                 break;
-
+            }
 
             case 6:
+            {
                 int n, m;
                 int i;
                 float fact;
 
-                print("");
+                printf("Enter n : ");
                 scanf("%d", &n);
+                printf("Enter m : ");
+                scanf("%d", &m);
                 
                 while (n <= m)
                 {
@@ -136,28 +151,51 @@ int main(void)
                         fact *= i;
                         i++;
                     }
-                    print("%.2f\n", fact);
+                    printf("%.2f\n", fact);
                     n++;
                 }
                 break;
-
+            }
 
             case 7:
+            {
                 int n;
-                int i = 1;
+                int n1 = 1;
+                int n2 = 1;
+                int n3;
+                int i = 3;
 
-                print("");
+                printf("Enter n : ");
                 scanf("%d", &n);
-                break;
+                
+                if (n == 1)
+                    printf("1");
+                    break;
+                if (n == 2)
+                    printf("1");
+                    break;
 
+                while(i <= n)
+                {
+                    n3 = n1 + n2;
+                    n1 = n2;
+                    n2 = n3;
+                    i++;
+                }
+
+                printf("%d", n2);
+
+                break;
+            }
 
             default:
-                print("Wrong number!");
+                printf("Wrong number!\n");
                 break;
         }
 
-        scanf("");
-        if ( == 0)
+        printf("Do you want to continue? yes = 1, no = 0 : ");
+        scanf("%d", &num);
+        if (num == 0)
             break;
     }
 

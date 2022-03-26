@@ -84,13 +84,13 @@ int main(void)
                     i = 2;
 
                     if(n == 1) {
-                        n++;
-                        break;
+                        is_prime = false;
                     }
 
                     if(n == 2) {
+                        printf("%d\n", n);
                         n++;
-                        break;
+                        continue;
                     }
 
                     while(i < n)
@@ -113,6 +113,7 @@ int main(void)
 
             case 5:
             {
+                // 여기서부터 해야 함
                 int n;
                 int i = 1;
                 float fact = 1.0;

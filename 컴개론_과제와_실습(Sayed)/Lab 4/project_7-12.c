@@ -8,7 +8,7 @@ int main(void)
 
     printf("Enter an expression: ");
     
-    ch = getchar;
+    ch = getchar();
     ans = (float)ch;
 
     while (ch != '\n') {

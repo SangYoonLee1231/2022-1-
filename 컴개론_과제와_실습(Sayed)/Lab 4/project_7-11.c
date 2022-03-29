@@ -13,11 +13,11 @@ int main(void)
 
     while (ch != '\n') {
         ch = getchar();
-        
+
         if (ch == ' ')
             is_last_name = true;
 
-        if (is_last_name)
+        if (is_last_name && ch != '\n')
             printf("%c", ch);
     }
 

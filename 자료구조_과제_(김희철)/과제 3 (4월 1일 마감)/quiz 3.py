@@ -1,3 +1,10 @@
+'''
+import sys
+
+data = sys.stdin.readlines()
+print(data)
+'''
+
 class Stack():
     # Stack을 클래스로 미리 구현하였다.
     def __init__(self):

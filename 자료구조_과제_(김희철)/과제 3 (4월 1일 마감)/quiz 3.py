@@ -1,9 +1,5 @@
-'''
 import sys
 
-data = sys.stdin.readlines()
-print(data)
-'''
 
 class Stack():
     # Stack을 클래스로 미리 구현하였다.
@@ -64,13 +60,15 @@ def check(string):
             if s.empty():
                 if elem == ')':
                     error_num = 1
-                    return i, error_num
+                    return i, error_num, ')'
+
                 if elem == '}':
                     error_num = 2
-                    return i, error_num
+                    return i, error_num, '}'
+
                 if elem == ']':
                     error_num = 3
-                    return i, error_num
+                    return i, error_num, ']'
 
             # 스택에 요소가 있어 맨 위 요소를 확인할 수 있는 경우
             else:
@@ -80,13 +78,15 @@ def check(string):
                 # 그렇지 않으면 error이다.
                 if (elem == ')' and peek_ch !='('):
                     error_num = 1
-                    return i, error_num
+                    return i, error_num, ')'
+                    
                 if (elem == '}' and peek_ch != '{'):
                     error_num = 2
-                    return i, error_num
+                    return i, error_num, '}'
+
                 if (elem == ']' and peek_ch != '['):
                     error_num = 3
-                    return i, error_num
+                    return i, error_num, ']'
                 # 위의 세 경우 모두 아나리면 정상적으로 pop 수행
 
         else:
@@ -97,7 +97,7 @@ def check(string):
 
     # 만일 스택에 남은 요소가 없다면, 모든 괄호의 짝이 맞았다는 뜻이다.
     if s.empty():
-        return None, 0
+        return None, 0, 0
     
     # 만일 스택에 요소가 남아있다면, 이들은 모두 짝이 맞지 않는 여는 괄호 (,{,[란 의미이다. (error 케이스)
     else:
@@ -106,22 +106,36 @@ def check(string):
 
         if peek_ch == '(':
             error_num = 4
-            return idx, error_num
+            return idx, error_num, '('
         elif peek_ch == '{':
             error_num = 5
-            return idx, error_num
+            return idx, error_num, '{'
         elif peek_ch == '[':
             error_num = 6
-            return idx, error_num
+            return idx, error_num, '['
         else: pass
 
 
-string = input()  # 문자열을 입력받는다.
+
+str_len = []
+long_str = ""
+line = 1
+
+
+while True:
+    string = sys.stdin.readline().strip()  # 문자열을 입력받는다.
+
+    if not string:
+        break
+
+    str_len.append(len(string))
+    long_str += string
+
 
 s = Stack()  # 스택 객체 s를 선언한다.
 error_idx = 0; error_num = 0
 
-error_idx, error_num = check(string)  # 입력받은 문자열을 check 함수를 통해 판정한다.
+error_idx, error_num, error_ch = check(long_str)  # 입력받은 문자열을 check 함수를 통해 판정한다.
 
 # error_num == 0 : error 발생 X, 모든 괄호의 짝이 맞음, 1을 출력한다.
 if error_num == 0:
@@ -129,4 +143,11 @@ if error_num == 0:
 
 # error_num == 1~6 : error 발생, error_idx값과 error_num값을 출력한다.
 else:
-    print(f"{error_idx}  error{error_num}")
+    error_idx += 1
+    for elem in str_len:
+        if elem >= error_idx:
+            break
+        error_idx -= elem
+        line += 1
+
+    print(f"error {error_num}: {error_ch} at position {error_idx} in line {line}")

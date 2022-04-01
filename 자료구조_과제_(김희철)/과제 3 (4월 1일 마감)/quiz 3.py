@@ -117,19 +117,20 @@ def check(string):
 
 
 
-str_len = []
-long_str = ""
-line = 1
+str_len = []  # 입력 받은 여러 줄의 문자열의 각 줄 길이를 저장하는 리스트이다.
+long_str = ""  # 입력 받은 여러 줄의 문자열을 하나의 긴 문자열로 합쳐 저장할 변수이다.
+line = 1  # 문자열을 탐색할 때 몇 번째 줄인지 확인하기 위한 용도의 변수이다.
 
 
+# 빈 문자열이 입력될 때까지 문자열을 줄 단위로 입력 받아 저장한다.
 while True:
-    string = sys.stdin.readline().strip()  # 문자열을 입력받는다.
+    string = sys.stdin.readline().strip()  # 문자열을 입력받는다. (공백 제거)
 
-    if not string:
+    if not string:  # 빈 문자열을 입력 받으면 그만 입력 받는다.
         break
 
-    str_len.append(len(string))
-    long_str += string
+    str_len.append(len(string))  # 각 줄의 문자열의 길이를 리스트로 저장한다.
+    long_str += string  # 입력 받은 여러 줄의 문자열을 순서대로 합친다.
 
 
 s = Stack()  # 스택 객체 s를 선언한다.
@@ -142,12 +143,18 @@ if error_num == 0:
     print(1)
 
 # error_num == 1~6 : error 발생, error_idx값과 error_num값을 출력한다.
+# 이 때, 
 else:
-    error_idx += 1
+    error_idx += 1  # 인덱스와 실제 문자열의 위치가 1만큼 다르므로, position 결괏값에 1을 더해준다.
+
+    # 에러가 발생한 위치를 계산한다. 
+    # error_idx 값은 여러 문자열을 하나로 합쳤을 때의 에러 발생 위치이므로,
+    # 이를 line번째 줄, position번째 위치로 변환해야 한다.
     for elem in str_len:
         if elem >= error_idx:
             break
         error_idx -= elem
         line += 1
 
+    # 계산한 결과값을 출력한다.
     print(f"error {error_num}: {error_ch} at position {error_idx} in line {line}")

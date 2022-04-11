@@ -21,6 +21,7 @@ class LinkedStack:
         e = self.top.data
         self.top = self.top.link
         return e
+        
 
 
 def add(a, b):

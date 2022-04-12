@@ -16,28 +16,28 @@ int main(void)
 
     // Enter the elements of set A and B and put them into the seperate sets.
     // Set A
-    char ch;
+    int num;
 
-    printf("Enter the elements of Set A. Finish to enter '.'\n(only 1 letter is available) : ");
+    printf("Enter the elements of Set A. Finish to enter -1\n(only number is available) : ");
     while(1)
     {
-        scanf("%c", &ch);
-        if (ch != '.') {
-            set_A[len_A] = ch;
+        scanf("%d", &num);
+        if (num != -1) {
+            set_A[len_A] = num;
             len_A++;
-        }   
+        }
         else {
             break;
         }         
     }
 
     // Set B
-    printf("Enter the elements of Set B. Finish to enter '.'\n(only 1 letter is available) : ");
+    printf("Enter the elements of Set B. Finish to enter -1'\n(only number is available) : ");
     while(1)
     {
-        scanf("%c", &ch);
-        if (ch != '.') {
-            set_B[len_B] = ch;
+        scanf("%d", &num);
+        if (num != -1) {
+            set_B[len_B] = num;
             len_B++;
         }
         else {
@@ -48,34 +48,50 @@ int main(void)
     // Find unions of A and B sets.
 
     // First, copy set A to union set.
-    for (int i = 0; i < len_A; i++) {
-        set_union[i] = set_A[i];
+    for (int i = 0; i < len_A; i++)
+    {
+        bool is_there = false;
+        for (int j = 0; j < len_A; j++)
+        {
+            if(set_A[i] == set_A[j]) {
+                if (i == j) {
+                    continue;
+                }
+                is_there = true;
+                break;
+            }
+        }
+        
+        if (is_there == false) {
+            set_union[i] = set_A[i];
+        }     
     }
 
     len_union = len_A;
 
     // Second, check the elemnts of set B. If it's unique, add to union set.
-    bool is_there = false;
-
+    
     for (int i = 0; i < len_B; i++)
     {
+        bool is_there = false;
         for (int j = 0; j < len_A; j++)
         {
-            if(set_B[i] == set_A[j])
+            if(set_B[i] == set_A[j]) {
                 is_there = true;
+                break;
+            }
         }
         
         if (is_there == false) {
-            set_union[len_union + i] = set_B[i];
+            set_union[len_union] = set_B[i];
             len_union++;
-            printf("len union : %d\n", len_union);
         }
     }
 
 
     // Print the union set.
     for (int i = 0; i < len_union; i++) {
-        printf("index : %d, value : %c\n", i, set_union[i]);
+        printf("No. %d, value : %d\n", i+1, set_union[i]);
     }
 
 

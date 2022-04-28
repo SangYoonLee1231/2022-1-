@@ -1,85 +1,36 @@
-class Queue:
-    MAX_QSIZE = 100
-    def __init__(self):
-        self.list = [None] * Queue.MAX_QSIZE
-        self.front = -1
-        self.rear =-1
-        self.size = 0
+DayoftheWeek = ['일','월','화','수','목','금','토']
 
+yy1, yy2 = input().split()
+yy1 = int(yy1)
+yy2 = int(yy2)
 
-    def resize(self, cap):
-        olditems = self.list
-        self.list = [None] * cap
-        walk = self.front
-        for k in range(self.size):
-            self.list[k] = olditems[walk]
-            walk = (walk + 1) % len(olditems)
-        self.front = -1
-        self.rear = self.size - 1
+yy1day = input()
+LPcount = 0     #주어진 해 중 윤년 카운트, 있을 경우 마지막 셈에서 카운트 1개당 1씩 추가
 
-
-    def isEmpty(self):
-        return self.size == 0
-    
-
-    def isFull(self):
-        # 큐가 full일 경우 리스트 길이를 2배로 확장
-        if self.list.size < self.MAX_QSIZE:
-            # 리스트 용량이 넉넉한 경우
-            print()
-
-            # 정상적으로 enqueue 과정 수행
-
-        else: # A.n == A.capacity # 리스트 용량이 더 필요한 경우 (자동으로 용량 크기 ↑)
-            Queue.MAX_QSIZE *= 2
-            self.resize(Queue.MAX_QSIZE)
-
-
-    def enqueue(self, e):
-        if self.size == len(self.list):
-            print("Queue is full")
-            self.resize(2 * len(self.list))
-        else:
-            self.rear = (self.rear + 1) % (len(self.list))    
-            self.list[self.rear] = e
-            self.size += 1
-
-
-    def dequeue(self):
-        if self.isEmpty():
-            print("Queue is empty")
-        else:        
-            self.front = (self.front + 1) % (len(self.list))
-            e = self.list[self.front]
-            self.size -= 1
-            return e
-
-    
-    def peek(self):
-        if self.isEmpty():
-            print("Queue is empty")
-        else:
-            return self.list[0]
-
-
-    def size(self):
-        return self.size
+for k in range(yy1, yy2+1):      #윤년은 4의 배수이면서 100의 배수가 아니거나 400의 배수일 때 이다
+    if (k % 4 == 0) & (k % 100 != 0):
+        LPcount += 1
+    elif k % 400 == 0:
+        LPcount += 1
 
 
 
-n = int(input())
+for i in range(7):     #주어진 요일을 숫자화한다(0~6)
+    if yy1day == DayoftheWeek[i]:
+        yy1num = i
 
-people_lst = [
-    tuple(map(int, input().split()))  # (arrive, elapse)
-    for _ in range(n)
-]
+term = 0
 
-q = Queue()
-time = 0
-total_time = 0
+for j in range(yy2 - yy1):     #주어진 두 수의 차를 횟수로 365를 더해준다
+    term += 365
 
-q.enqueue(people_lst[0])
 
-while not q.isEmpty():
-    q.peek()
-    time += 1
+remainder = term % 7     #365를 7로 나누어 나머지를 구한다
+
+final = yy1num + remainder + LPcount     #나머지와 처음 요일, 그리고 윤년의 카운트만큼 더하여 요일을 구한다.
+
+if final > 7:     #만약 최종 final값이 윤년 등의 사유로 7이 넘는다면 그 나머지를 구하여 요일을 구한다.
+   temp = final
+   final = temp % 7
+
+print(DayoftheWeek[final])

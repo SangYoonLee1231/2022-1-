@@ -17,6 +17,8 @@ struct Book
 };
 
 
+
+
 int main(void)
 {
     struct Book book[100];

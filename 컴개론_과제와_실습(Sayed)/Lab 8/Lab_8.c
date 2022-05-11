@@ -230,7 +230,7 @@ int main(void)
 
             case 4:
             {
-                // 2) Search book information By ID
+                // Search book information By ID
                 int given_ID;
                 bool is_there = false;
 
@@ -312,7 +312,7 @@ int main(void)
 
             case 7:
             {
-                // 3) Display a List of all Books
+                // Display a List of all Books
                 for(int i = 0; i < len; i++)
                 {
                     printf("Book ID : %d\n", book[i].ID);

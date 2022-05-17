@@ -1,4 +1,7 @@
 /*
+< Library Management Program (Using Structure, Function) >
+
+
 Write a menu-driven Library Management program in C.
 The program should maintain the following information.
 
@@ -29,6 +32,9 @@ Book ID should not be a negative number.
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+
+void update_book();
+void display_book_info();
 
 void add_book_info();
 void update_book_info();
@@ -147,30 +153,77 @@ int main(void)
 
 
 
+// ---------------------------------------------------------------------
+
+
+
+
+// Update (Or add) Book info into the index of 'book' array
+void update_book(struct Book given_book, int idx)
+{
+    printf("Enter Book Name : ");
+    scanf("%s", &given_book.name);
+
+    printf("Enter Publication Date (0000-00-00): ");
+    scanf("%s", &given_book.pub_date);
+
+    printf("Enter Publisher Name : ");
+    scanf("%s", &given_book.pub_name);
+
+    printf("Enter Publisher Phone Number (don't use dash(-)) : ");
+    scanf("%d", &given_book.pub_phone_num);
+
+    printf("Enter an Author Name : ");
+    scanf("%s", &given_book.author_name);
+
+    printf("Enter an Author Email Address : ");
+    scanf("%s", &given_book.author_email);
+
+    // Add a Book Infomation into a structure
+    book[idx].ID = given_book.ID;
+    strcpy(book[idx].name, given_book.name);
+    strcpy(book[idx].pub_date, given_book.pub_date);
+    strcpy(book[idx].pub_name, given_book.pub_name);
+    book[idx].pub_phone_num = given_book.pub_phone_num;
+    strcpy(book[idx].author_name, given_book.author_name);
+    strcpy(book[idx].author_email, given_book.author_email);
+    
+    printf("Update (Or Add) Complete.\n\n");
+}
+
+
+// Display all the infos in the index of 'book' array
+void display_book_info(int idx)
+{
+    printf("Book ID : %d\n", book[idx].ID);
+    printf("Book Name : %s\n", book[idx].name);
+    printf("Publication Date : %s\n", book[idx].pub_date);
+    printf("Publisher Name : %s\n", book[idx].pub_name);
+    printf("Publisher Phone Number : %d\n", book[idx].pub_phone_num);
+    printf("Author Name : %s\n", book[idx].author_name);
+    printf("Author Email Address : %s\n\n", book[idx].author_email);
+}
+
+
+// ---------------------------------------------------------------------
+
+
+// 1 ~ 7 기능 수행 함수
 void add_book_info()
 {
     // Case 1 : Add book information
-    // 구조체 하나 선언하는 것으로 바꾸기
-    int given_ID;
-    char given_name[20];
-
-    char given_pub_date[10];
-    char given_pub_name[20];
-    int given_pub_phone_num;
-
-    char given_author_name[20];
-    char given_author_email[30];
+    struct Book given_book;
 
     bool is_given = false;
 
 
     // Cheak if the given Book ID is unique and not a negative number
     printf("Enter Book ID (MUST new and not a negative num) : ");
-    scanf("%d", &given_ID);
+    scanf("%d", &given_book.ID);
 
     for(int i = 0; i < len; i++) {
         // If ID is unique
-        if(given_ID == book[i].ID && given_ID >= 0)
+        if(given_book.ID == book[i].ID && given_book.ID >= 0)
         {
             printf("Already given ID. Terminate the process.\n\n");
             is_given = true;
@@ -180,44 +233,45 @@ void add_book_info()
     if(is_given)
         return;
 
-
     // Continue the process if the Book ID is unique and not a negative number
     printf("Available Book ID. (unique and not an negative number) Continue the process.\n");
 
+    update_book(given_book, len);
+
+    /*
     printf("Enter Book Name : ");
-    scanf("%s", &given_name);
+    scanf("%s", &given_book.name);
 
     printf("Enter Publication Date (0000-00-00): ");
-    scanf("%s", &given_pub_date);
+    scanf("%s", &given_book.pub_date);
 
     printf("Enter Publisher Name : ");
-    scanf("%s", &given_pub_name);
+    scanf("%s", &given_book.pub_name);
 
     printf("Enter Publisher Phone Number (don't use dash(-)) : ");
-    scanf("%d", &given_pub_phone_num);
+    scanf("%d", &given_book.pub_phone_num);
 
     printf("Enter an Author Name : ");
-    scanf("%s", &given_author_name);
+    scanf("%s", &given_book.author_name);
 
     printf("Enter an Author Email Address : ");
-    scanf("%s", &given_author_email);
+    scanf("%s", &given_book.author_email);
     
 
     // Add a Book Infomation into a structure
     printf("Successfully added.\n\n");
 
-    book[len].ID = given_ID;
-    strcpy(book[len].name, given_name);
-    strcpy(book[len].pub_date, given_pub_date);
-    strcpy(book[len].pub_name, given_pub_name);
-    book[len].pub_phone_num = given_pub_phone_num;
-    strcpy(book[len].author_name, given_author_name);
-    strcpy(book[len].author_email, given_author_email);
+    book[len].ID = given_book.ID;
+    strcpy(book[len].name, given_book.name);
+    strcpy(book[len].pub_date, given_book.pub_date);
+    strcpy(book[len].pub_name, given_book.pub_name);
+    book[len].pub_phone_num = given_book.pub_phone_num;
+    strcpy(book[len].author_name, given_book.author_name);
+    strcpy(book[len].author_email, given_book.author_email);
+    */
 
     len += 1;
 }
-
-
 
 
 void update_book_info()
@@ -231,15 +285,7 @@ void update_book_info()
     char given_book_name;
     int is_there = false;
 
-    int given_new_ID;
-    char given_new_name[20];
-
-    char given_new_pub_date[10];
-    char given_new_pub_name[20];
-    int given_new_pub_phone_num;
-
-    char given_new_author_name[20];
-    char given_new_author_email[30];
+    struct Book given_new_book;
 
     // Check if the given book ID is exist in the structure
     for(int i = 0; i < 100; i++) {
@@ -248,35 +294,39 @@ void update_book_info()
             printf("I found it.\n");
 
             // Update Process
+            update_book(given_new_book, i);
+
+            /*
             printf("Enter NEW Book ID : ");
-            scanf("%d", &given_new_ID);
+            scanf("%d", &given_new_book.ID);
 
             printf("Enter NEW Book Name : ");
-            scanf("%s", &given_new_name);
+            scanf("%s", &given_new_book.name);
 
             printf("Enter NEW Publication Date (0000-00-00): ");
-            scanf("%s", &given_new_pub_date);
+            scanf("%s", &given_new_book.pub_date);
 
             printf("Enter NEW Publisher Name : ");
-            scanf("%s", &given_new_pub_name);
+            scanf("%s", &given_new_book.pub_name);
 
             printf("Enter NEW Publisher Phone Number (don't use dash(-)) : ");
-            scanf("%d", &given_new_pub_phone_num);
+            scanf("%d", &given_new_book.pub_phone_num);
 
             printf("Enter a NEW Author Name : ");
-            scanf("%s", &given_new_author_name);
+            scanf("%s", &given_new_book.author_name);
 
             printf("Enter a NEW Author Email Address : ");
-            scanf("%s", &given_new_author_email);
+            scanf("%s", &given_new_book.author_email);
 
 
-            book[i].ID = given_new_ID;
-            strcpy(book[i].name, given_new_name);
-            strcpy(book[i].pub_date, given_new_pub_date);
-            strcpy(book[i].pub_name, given_new_pub_name);
-            book[i].pub_phone_num = given_new_pub_phone_num;
-            strcpy(book[i].author_name, given_new_author_name);
-            strcpy(book[i].author_email, given_new_author_email);
+            book[i].ID = given_new_book.ID;
+            strcpy(book[i].name, given_new_book.name);
+            strcpy(book[i].pub_date, given_new_book.pub_date);
+            strcpy(book[i].pub_name, given_new_book.pub_name);
+            book[i].pub_phone_num = given_new_book.pub_phone_num;
+            strcpy(book[i].author_name, given_new_book.author_name);
+            strcpy(book[i].author_email, given_new_book.author_email);
+            */
 
             is_there = true;
 
@@ -288,7 +338,6 @@ void update_book_info()
     if(is_there == false)
         printf("Failed to found the ID.\n\n");
 }
-
 
 
 void delete_book_info()
@@ -326,7 +375,6 @@ void delete_book_info()
 }
 
 
-
 void search_book_info()
 {
     // Case 4 : Search book information By ID
@@ -341,6 +389,8 @@ void search_book_info()
         {
             printf("Given Name is now on position %d.\n", i);
             
+            display_book_info(i);
+            /*
             printf("Book ID : %d\n", book[i].ID);
             printf("Book Name : %s\n", book[i].name);
             printf("Publication Date : %s\n", book[i].pub_date);
@@ -348,7 +398,7 @@ void search_book_info()
             printf("Publisher Phone Number : %d\n", book[i].pub_phone_num);
             printf("Author Name : %s\n", book[i].author_name);
             printf("Author Email Address : %s\n\n", book[i].author_email);
-
+            */
             is_there = true;
             break;
         }
@@ -356,7 +406,6 @@ void search_book_info()
     if(is_there == false)
         printf("Given Name is NOT in the list.\n\n");
 }
-
 
 
 void display_books_by_author()
@@ -370,6 +419,8 @@ void display_books_by_author()
     {
         if(strcmp(a, book[i].author_name) == 0)
         {
+            display_book_info(i);
+            /*
             printf("Book ID : %d\n", book[i].ID);
             printf("Book Name : %s\n", book[i].name);
             printf("Publication Date : %s\n", book[i].pub_date);
@@ -377,11 +428,11 @@ void display_books_by_author()
             printf("Publisher Phone Number : %d\n", book[i].pub_phone_num);
             printf("Author Name : %s\n", book[i].author_name);
             printf("Author Email Address : %s\n\n", book[i].author_email);
+            */
         }
     }
     printf("\n");
 }
-
 
 
 void display_books_by_publisher()
@@ -395,6 +446,8 @@ void display_books_by_publisher()
     {
         if(strcmp(p, book[i].pub_name) == 0)
         {
+            display_book_info(i);
+            /*
             printf("Book ID : %d\n", book[i].ID);
             printf("Book Name : %s\n", book[i].name);
             printf("Publication Date : %s\n", book[i].pub_date);
@@ -402,11 +455,11 @@ void display_books_by_publisher()
             printf("Publisher Phone Number : %d\n", book[i].pub_phone_num);
             printf("Author Name : %s\n", book[i].author_name);
             printf("Author Email Address : %s\n\n", book[i].author_email);
+            */
         }
     }
     printf("\n");
 }
-
 
 
 void display_all_books()
@@ -414,6 +467,8 @@ void display_all_books()
     // Case 7 : Display a List of all Books
     for(int i = 0; i < len; i++)
     {
+        display_book_info(i);
+        /*
         printf("Book ID : %d\n", book[i].ID);
         printf("Book Name : %s\n", book[i].name);
         printf("Publication Date : %s\n", book[i].pub_date);
@@ -421,6 +476,7 @@ void display_all_books()
         printf("Publisher Phone Number : %d\n", book[i].pub_phone_num);
         printf("Author Name : %s\n", book[i].author_name);
         printf("Author Email Address : %s\n\n", book[i].author_email);
+        */
     }
     printf("\n");
 }

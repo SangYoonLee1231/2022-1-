@@ -49,20 +49,41 @@ Book ID should not be a negative number.
 #include <string.h>
 #include <stdbool.h>
 
-/* Old 지울 것
-void update_book();
-void display_book_info();
+struct Books {
+    char book_id[5];
+    char book_name[50];
+    char publication_date[20];
+    char publisher_name[50];
+    char author_name[50];
+    char author_address[100];
+    char author_phone_num[20];
+    char author_email_address[50];
+    char author_bio[100];
+};
 
-void add_book_info();
-void update_book_info();
-void delete_book_info();
-void search_book_info();
-void display_books_by_author();
-void display_books_by_publisher();
-void display_all_books();
-*/
+struct Book {
+    char book_id[5];
+    char book_name[50];
+    char publication_date[20];
+    char publisher_name[50];
+    char author_id[5];
+};
 
-// New
+struct Author {
+    char author_id[5];
+    char author_name[50];
+    char author_address[50];
+    char author_phone_num[20];
+    char author_email_address[50];
+    char author_bio[100];
+};
+
+
+void display_all_authors();
+void display_books();
+struct Books store_data_in_book_struct(char line[]);
+
+// 기능 구현 함수들
 void add_author_info();
 void update_author_info();
 void delete_author_info();
@@ -75,7 +96,7 @@ void search_book_info();
 void display_all_books();
 
 
-int num_of_books = 0;
+//int num_of_books = 0;
 int num;
 
 
@@ -84,30 +105,33 @@ int main(void)
 
     while(1)
     {
-        printf("Enter a number.\n");
+        printf("Enter a number.\n\n");
         printf("0. Terminate the program\n");
 
         printf("1. Add author information\n");
         printf("2. Update author information\n");
         printf("3. Delete author information \n");
-        printf("4. Search author information\n");
+        printf("4. Search author information\n\n");
 
         printf("5. Add book information\n");
         printf("6. Update book information\n");
         printf("7. Delete book information\n");
         printf("8. Search book information\n");
-        printf("9. Display a list of all books\n");
+        printf("9. Display a list of all books\n\n");
 
         printf("=> ");
 
         scanf("%d", &num);
+
+        printf("\n");
+
 
         switch(num)
         {
             case 0:
             {
                 // 0) Terminate the program
-                return 0;
+                exit(0);
                 break;
             }
             
@@ -140,6 +164,7 @@ int main(void)
                 break;
             }
             
+
             case 5:
             {
                 // Case 5 : Add book information
@@ -190,173 +215,901 @@ int main(void)
 // ---------------------------------------------------------------------
 
 
-void update_book()
-{
-    FILE *fp;
-    fp = fopen("author_infos.txt", "a+");
+// display functions
 
-    if (fp != NULL) {
-        printf("Error! Opening File");
+void display_all_authors()
+{
+    FILE* fAu;
+
+    fAu = fopen("AuthorData.txt", "a+");
+
+    if (fAu == NULL) {
+        printf("Failed to opening flie. Terminate the program.");
         exit(1);
     }
 
-    int book_id;
-    char book_name[20];
-    char publication_date[20];
-    char publisher_name[20];
-    char author_name[20];
-    char author_address[20];
-    char author_phone_number[20];
-    char author_email_address[20];
-    char author_short_biography[20];
+    char line[300];
+    struct Author author;
 
-    printf("Enter Book ID : ");
-    scanf("%d", &book_id);
+    while(gets(line, 300, fAu) == NULL)
+    {
+        char seps = ",";
+        char* token = NULL;
 
-    printf("Enter Book Name : ");
-    scanf("%s", &book_name);
+        token = strtok(line, seps);
+        strcpy(author.author_id, token);
 
-    printf("Enter Publication Date (0000-00-00): ");
-    scanf("%s", &publication_date);
+        token = strtok(NULL, seps);
+        strcpy(author.author_name, token);
 
-    printf("Enter Publisher Name : ");
-    scanf("%s", &publisher_name);
+        token = strtok(NULL, seps);
+        strcpy(author.author_address, token);
 
-    printf("Enter an Author Name : ");
-    scanf("%s", &author_name);
+        token = strtok(NULL, seps);
+        strcpy(author.author_phone_num, token);
 
-    printf("Enter an Author Address : ");
-    scanf("%s", &author_address);
+        token = strtok(NULL, seps);
+        strcpy(author.author_email_address, token);
 
-    printf("Enter Author Phone Number (don't use dash(-)) : ");
-    scanf("%d", &author_phone_number);
+        token = strtok(NULL, seps);
+        strcpy(author.author_bio, token);
 
-    printf("Enter an Author Email Address : ");
-    scanf("%s", &author_email_address);
+        printf("%s\t", author.author_id);
+        printf("%s\t", author.author_name);
+        printf("%s\t", author.author_address);
+        printf("%s\t", author.author_phone_num);
+        printf("%s\t", author.author_email_address);
+        printf("%s\t", author.author_bio);
+    }
 
-    printf("Enter an Author's Short Biography : ");
-    scanf("%s", &author_short_biography);
+    fclose(fAu);
 }
 
-/*
 
-// Update (Or add) Book info into the index of 'book' array
-void update_book(struct Book given_book, int idx)
+
+void display_books()
 {
-    printf("Enter Book Name : ");
-    scanf("%s", &given_book.name);
+    FILE* fBook;
 
-    printf("Enter Publication Date (0000-00-00): ");
-    scanf("%s", &given_book.pub_date);
+    fBook = fopen("Booksdata.txt", "a+");
 
-    printf("Enter Publisher Name : ");
-    scanf("%s", &given_book.pub_name);
+    if(fBook == NULL) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
 
-    printf("Enter Publisher Phone Number (don't use dash(-)) : ");
-    scanf("%d", &given_book.pub_phone_num);
+    FILE *fAu;
+    fAu = fopen("AuthorData.txt", "a+");
 
-    printf("Enter an Author Name : ");
-    scanf("%s", &given_book.author_name);
+    if (fAu == NULL) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
 
-    printf("Enter an Author Email Address : ");
-    scanf("%s", &given_book.author_email);
+    char line[300];
+    struct Books book;
+    int author_id;
+    int flag = 0;
 
-    // Add a Book Infomation into a structure
-    book[idx].ID = given_book.ID;
-    strcpy(book[idx].name, given_book.name);
-    strcpy(book[idx].pub_date, given_book.pub_date);
-    strcpy(book[idx].pub_name, given_book.pub_name);
-    book[idx].pub_phone_num = given_book.pub_phone_num;
-    strcpy(book[idx].author_name, given_book.author_name);
-    strcpy(book[idx].author_email, given_book.author_email);
-    
-    printf("Update (Or Add) Complete.\n\n");
+    while(fgets(line, 300, fBook) == NULL)
+    {
+        char seps[] = ",";
+        char* token = NULL;
+
+        token = strtok(line, seps);
+        strcpy(book.book_id, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.book_name, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.publication_date, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.publisher_name, token);
+
+        token = strtok(NULL, seps);
+        author_id = (int)token;
+
+        while(fgets(line, 300, fAu) != NULL)
+        {
+            token = strtok(line, seps);
+
+            if((int)token == author_id)
+            {
+                token = strtok(NULL, seps);
+                strcpy(book.author_name, token);
+
+                token = strtok(NULL, seps);
+                strcpy(book.author_address, token);
+
+                token = strtok(NULL, seps);
+                strcpy(book.author_phone_num, token);
+
+                token = strtok(NULL, seps);
+                strcpy(book.author_email_address, token);
+
+                token = strtok(NULL, seps);
+                strcpy(book.author_bio, token);
+
+                flag = 1;
+                break;
+            }
+        }
+
+        if(!flag) {
+            printf("Something went wrong. Terminate the process.");
+            exit(1);
+        }
+
+        printf("\n\nBook ID : %d", book.book_id);
+        printf("\nBook Name : %s", book);
+        printf("\n");
+        printf("\n");
+        printf("\n");
+        printf("\n");
+        printf("\n");
+        printf("\n");
+        printf("\n");
+    }
 }
 
-
-// Display all the infos in the index of 'book' array
-void display_book_info(int idx)
+struct Books store_data_in_book_struct(char line[])
 {
-    printf("Book ID : %d\n", book[idx].ID);
-    printf("Book Name : %s\n", book[idx].name);
-    printf("Publication Date : %s\n", book[idx].pub_date);
-    printf("Publisher Name : %s\n", book[idx].pub_name);
-    printf("Publisher Phone Number : %d\n", book[idx].pub_phone_num);
-    printf("Author Name : %s\n", book[idx].author_name);
-    printf("Author Email Address : %s\n\n", book[idx].author_email);
+    struct Books book;
+
+    char seps[] = ",";
+    char* token = NULL;
+
+    //char line[300] = line;
+
+    token = strtok(line, seps);
+    strcpy(book.book_id, token);
+
+    token = strtok(NULL, seps);
+    strcpy(book.book_name, token);
+
+    token = strtok(NULL, seps);
+    strcpy(book.publication_date, token);
+
+    token = strtok(NULL, seps);
+    strcpy(book.publisher_name, token);
+
+    token = strtok(NULL, seps);
+    strcpy(book.author_name, token);
+
+    token = strtok(NULL, seps);
+    strcpy(book.author_address, token);
+
+    token = strtok(NULL, seps);
+    strcpy(book.author_phone_num, token);
+
+    token = strtok(NULL, seps);
+    strcpy(book.author_email_address, token);
+
+    token = strtok(NULL, seps);
+    strcpy(book.author_bio, token);
+
+
+    return book;
 }
 
-*/
+
+void display_all_books()
+{
+    getchar();
+    printf("Enter Book Name : ");
+    char bookName[20];
+    gets(bookName);
+
+    FILE *fBook;
+    fBook = fopen("BooksData.txt", "a+");
+
+    if (fBook == NULL) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
+
+    FILE *fAu;
+    fAu = fopen("AuthorData.txt", "a+");
+
+    if (fAu == NULL) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
+
+
+    char line[300];
+    int author_id;
+
+    while(fgets(line, 300, fBook) != NULL)
+    {
+        //puts(line);
+
+        char seps = ",";
+        char* token = NULL;
+
+        token = strtok(line, seps);
+        printf("%s ", token);
+
+        for (int i = 0; i < 2; i++) {
+            token = strtok(NULL, seps);
+            printf("%s, ", token);
+        }
+
+        token = strtok(NULL, seps);
+        author_id = token;
+
+        // find Author info in AuthorData.txt
+        char line[60];
+
+        while(fgets(line, 60, fAu) != NULL)
+        {
+            char seps[] = ",";
+            char* token2 = NULL;
+
+            token2 = strtok(line, seps);
+            if ((int)token2 == author_id)
+            {
+                token2 = strtok(NULL, seps);
+                printf("%s, ", token2);
+
+                token2 = strtok(NULL, seps);
+                printf("%s, ", token2);
+
+                token2 = strtok(NULL, seps);
+                printf("%s, ", token2);
+
+                token2 = strtok(NULL, seps);
+                printf("%s, ", token2);
+
+                token2 = strtok(NULL, seps);
+                printf("%s, ", token2);
+
+                break;
+            }
+        }
+        printf("\n");
+    }
+}
+
+
 // ---------------------------------------------------------------------
 
 
 void add_author_info()
 {
-    
+    struct Author author;
+    int flag;
+
+    bool is_given = false;
+
+    while(1)
+    {
+        is_given = false;
+        getchar();
+        printf("Enter Author ID: ");
+        gets(author.author_id);
+        printf("Enter Author Name: ");
+        gets(author.author_name);
+        printf("Enter Author Address: ");
+        gets(author.author_address);
+        printf("Enter Author Phone Number: ");
+        gets(author.author_phone_num);
+        printf("Enter Author Email Address: ");
+        gets(author.author_email_address);
+        printf("Enter Author Bio: ");
+        gets(author.author_bio);
+
+        FILE* fAu;
+
+        fAu = fopen("AuthorData.txt", "a+");
+
+        if (fAu == NULL) {
+            printf("Failed to opening flie. Terminate the program.");
+            exit(1);
+        }
+
+        fprintf(fAu, "%s,", author.author_id);
+        fprintf(fAu, "%s,", author.author_name);
+        fprintf(fAu, "%s,", author.author_address);
+        fprintf(fAu, "%s,", author.author_phone_num);
+        fprintf(fAu, "%s,", author.author_email_address);
+        fprintf(fAu, "%s,\n", author.author_bio);
+        
+        fclose(fAu);
+
+        printf("Continue to add new author info? Yes = 1 / No = 0 \n=> ");
+        scanf("%d", &flag);
+        if(!flag)  break;
+    }
 }
 
 
 void update_author_info()
 {
+    int given_author_id;
 
+    printf("\nEnter Author ID: ");
+    scanf("%d", &given_author_id);
+    getchar();
+
+    FILE* fAu;
+
+    fAu = fopen("AuthorData.txt", "a+");
+
+    if (fAu != NULL) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
+
+    FILE* temp_fAu;
+
+    temp_fAu = fopen("tempAuthorData.txt", "w");
+
+    if (temp_fAu != NULL) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
+
+
+    char line[300];
+    struct Author author;
+
+    while (fgets(line, 300, fAu) != NULL)
+    {
+        char seps[] = ",";
+        char* token = NULL;
+
+        token = strtok(NULL, seps);
+        strcpy(author.author_name, token);
+
+        token = strtok(NULL, seps);
+        strcpy(author.author_address, token);
+
+        token = strtok(NULL, seps);
+        strcpy(author.author_phone_num, token);
+
+        token = strtok(NULL, seps);
+        strcpy(author.author_email_address, token);
+
+        token = strtok(NULL, seps);
+        strcpy(author.author_bio, token);
+
+
+        if (author.author_id == given_author_id)
+        {
+            printf("Enter New Author Name: ");
+            gets(author.author_name);
+            printf("Enter New Author Address: ");
+            gets(author.author_address);
+            printf("Enter New Author Phone Num: ");
+            gets(author.author_phone_num);
+            printf("Enter New Author Email Address: ");
+            gets(author.author_email_address);
+            printf("Enter New Author Bio: ");
+            gets(author.author_bio);
+
+            fprintf(temp_fAu, "%s,", author.author_name);
+            fprintf(temp_fAu, "%s,", author.author_address);
+            fprintf(temp_fAu, "%s,", author.author_phone_num);
+            fprintf(temp_fAu, "%s,", author.author_email_address);
+            fprintf(temp_fAu, "%s \n", author.author_bio);
+
+            continue;
+        }
+
+        fprintf(temp_fAu, "%s,", author.author_name);
+        fprintf(temp_fAu, "%s,", author.author_address);
+        fprintf(temp_fAu, "%s,", author.author_phone_num);
+        fprintf(temp_fAu, "%s,", author.author_email_address);
+        fprintf(temp_fAu, "%s", author.author_bio);
+    }
+
+    fclose(fAu);
+    fclose(temp_fAu);
+
+
+    int remove_flag = remove("AuthorData.txt");
+    if (remove_flag != 0)
+        puts("Unable to remove AuthorData.txt");
+
+    int rename_flag = rename("tempAuthorData.txt", "AuthorData.txt");
+    if (rename_flag != 0)
+        puts("Unable to remove tempBooksData.txt");
 }
+
 
 void delete_author_info()
 {
+    int given_author_id;
 
+    printf("\nEnter Author ID: ");
+    scanf("%d", &given_author_id);
+    getchar();
+
+    FILE* fAu;
+
+    fAu = fopen("AuthorData.txt", "a+");
+
+    if (fAu != NULL) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
+
+    FILE* temp_fAu;
+
+    temp_fAu = fopen("tempAuthorData.txt", "w");
+
+    if (temp_fAu != NULL) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
+
+
+    char line[300];
+    struct Author author;
+
+    while (fgets(line, 300, fAu) != NULL)
+    {
+        char seps[] = ",";
+        char* token = NULL;
+
+        token = strtok(NULL, seps);
+        strcpy(author.author_name, token);
+
+        token = strtok(NULL, seps);
+        strcpy(author.author_address, token);
+
+        token = strtok(NULL, seps);
+        strcpy(author.author_phone_num, token);
+
+        token = strtok(NULL, seps);
+        strcpy(author.author_email_address, token);
+
+        token = strtok(NULL, seps);
+        strcpy(author.author_bio, token);
+
+        if (author.author_id == given_author_id)
+        {
+            // erase
+            continue;
+        }
+
+        fprintf(temp_fAu, "%s,", author.author_name);
+        fprintf(temp_fAu, "%s,", author.author_address);
+        fprintf(temp_fAu, "%s,", author.author_phone_num);
+        fprintf(temp_fAu, "%s,", author.author_email_address);
+        fprintf(temp_fAu, "%s", author.author_bio);
+    }
+
+    fclose(fAu);
+    fclose(temp_fAu);
+
+
+    int remove_flag = remove("AuthorData.txt");
+    if (remove_flag != 0)
+        puts("Unable to remove AuthorData.txt");
+
+    int rename_flag = rename("tempAuthorData.txt", "AuthorData.txt");
+    if (rename_flag != 0)
+        puts("Unable to remove tempBooksData.txt");
 }
+
 
 void search_author_info()
 {
+    getchar();
+    printf("Enter Author Name: ");
+    char authorName[20];
+    gets(authorName);
+
+    FILE *fAu;
+    fAu = fopen("AuthorData.txt", "a+");
+
+    if (fAu == NULL) {
+        printf("Failed to opening flie. Terminate the program.");
+    }
+
+    char line[60];
+    int flag = 0;
+
+    while(fgets(line, 60, fAu) != NULL)
+    {
+        char seps[] = ",";
+        char* token = NULL;
+
+        token = strtok(line, seps);
+        token = strtok(line, seps);
+
+        if(strcmp(token, authorName) == 0) {
+            puts(line);
+            flag = 1;
+        }
+    }
+
+    if(!flag) {
+        print("Nothing has found.");
+    }
 
 }
+
 
 void add_book_info()
 {
     // Case 5 : Add book information
+    struct Book book;
     int id;
+    int pick_author;
 
     bool is_given = false;
 
-    update_book();
+    while(1)
+    {
+        is_given = false;
 
-    /*
-    prinf("Enter Book Info (ID book_name author_name )");
+        printf("\nEnter Book ID: ");
+        gets(book.book_id);
+        printf("Enter Book Name: ");
+        gets(book.book_name);
+        printf("Enter Publication Date: ");
+        gets(book.publication_date);
+        printf("Enter Publisher Name: ");
+        gets(book.publisher_name);
 
-    // Cheak if the given Book ID is unique and not a negative number
-    printf("Enter Book ID (MUST new and not a negative num) : ");
-    scanf("%d", &id);
+        printf("Author List\n");
+        display_all_authors();
 
-    for(int i = 0; i < num_of_books; i++) {
-        // If ID is unique
-        if(given_book.ID == book[i].ID && given_book.ID >= 0)
-        {
-            printf("Already given ID. Terminate the process.\n\n");
-            is_given = true;
-            break;
+        printf("To add info of author above list, enter 1.\nTo add a new author, enter 0.");
+        scanf("%d", &pick_author);
+
+        if(pick_author) {
+            // add info of author above list
+            printf("Enter Author ID: ");
+            gets(book.author_id);
         }
+        else {
+            // add a new author
+            add_author_info();
+            printf("Author List: ");
+            display_all_authors();
+            printf("Enter Author ID: ");
+            gets(book.author_id);
+        }
+
+        FILE* fBook;
+
+        fBook = fopen("BooksData.txt", "a+");
+
+        if (fBook == NULL) {
+            printf("Failed to opening flie. Terminate the program.");
+            exit(1);
+        }
+
+        fprintf(fBook, "%s,", book.book_id);
+        fprintf(fBook, "%s,", book.book_name);
+        fprintf(fBook, "%s,", book.publication_date);
+        fprintf(fBook, "%s,", book.publisher_name);
+        fprintf(fBook, "%s,\n", book.author_id);
+
+        fclose(fBook);
+
+        printf("\nRecord saved\n");
+
+        break;
     }
-    if(is_given)
-        return;
-
-    // Continue the process if the Book ID is unique and not a negative number
-    printf("Available Book ID. (unique and not an negative number) Continue the process.\n");
-
-    update_book(given_book, len);
-    */
-
-    num_of_books += 1;
 }
+
 
 void update_book_info()
 {
+    // ask user to enter book ID.
+    int given_book_id;
 
+    printf("\nEnter Book ID: ");
+    scanf("%d", &given_book_id);
+    getchar();
+
+    FILE* fBook;
+
+    fBook = fopen("BooksData.txt", "a+");
+
+    if (fBook == NULL) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
+
+    FILE* fAu;
+
+    fAu = fopen("AuthorData.txt", "a+");
+
+    if (fAu != NULL) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
+
+    FILE* temp_fBook;
+
+    temp_fBook = fopen("tempBooksData.txt", "w");
+
+    if (temp_fBook != NULL) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
+
+    FILE* temp_fAu;
+
+    temp_fAu = fopen("tempAuthorData.txt", "w");
+
+    if (temp_fAu != NULL) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
+
+
+    char line[300];
+    struct Books book;
+
+    while (fgets(line, 300, fBook) != NULL)
+    {
+        char seps[] = ",";
+        char* token = NULL;
+
+        token = strtok(line, seps);
+        strcpy(book.book_id, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.book_name, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.publication_date, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.publisher_name, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.author_name, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.author_address, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.author_phone_num, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.author_email_address, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.author_bio, token);
+
+
+        if (book.book_id == given_book_id)
+        {
+            printf("Enter New Book Name: ");
+            gets(book.book_name);
+            printf("Enter New Publication Date: ");
+            gets(book.publication_date);
+            printf("Enter New Publisher Name: ");
+            gets(book.publisher_name);
+            printf("Enter New Author Name: ");
+            gets(book.author_name);
+            printf("Enter New Author Address: ");
+            gets(book.author_address);
+            printf("Enter New Author Phone Number: ");
+            gets(book.author_phone_num);
+            printf("Enter New Author Email Address: ");
+            gets(book.author_email_address);
+            printf("Enter New Author Short Bio: ");
+            gets(book.author_bio);
+
+            fprintf(temp_fBook, "%d,", book.book_id);
+            fprintf(temp_fBook, "%s,", book.book_name);
+            fprintf(temp_fBook, "%s,", book.publication_date);
+            fprintf(temp_fBook, "%s,", book.publisher_name);
+
+            fprintf(temp_fAu, "%s,", book.author_name);
+            fprintf(temp_fAu, "%s,", book.author_address);
+            fprintf(temp_fAu, "%s,", book.author_phone_num);
+            fprintf(temp_fAu, "%s,", book.author_email_address);
+            fprintf(temp_fAu, "%s \n", book.author_bio);
+
+            continue;
+        }
+
+        fprintf(temp_fBook, "%d ,", book.book_id);
+        fprintf(temp_fBook, "%s ,", book.book_name);
+        fprintf(temp_fBook, "%s ,", book.publication_date);
+        fprintf(temp_fBook, "%s ,", book.publisher_name);
+
+        fprintf(temp_fAu, "%s ,", book.author_name);
+        fprintf(temp_fAu, "%s ,", book.author_address);
+        fprintf(temp_fAu, "%s ,", book.author_phone_num);
+        fprintf(temp_fAu, "%s ,", book.author_email_address);
+        fprintf(temp_fAu, "%s", book.author_bio);
+    }
+
+    fclose(fBook);
+    fclose(fAu);
+    fclose(temp_fBook);
+    fclose(temp_fAu);
+
+
+    int remove_flag = remove("BooksData.txt");
+    if (remove_flag != 0)
+        puts("Unable to remove BooksData.txt");
+
+    remove_flag = remove("AuthorData.txt");
+    if (remove_flag != 0)
+        puts("Unable to remove AuthorData.txt");
+
+
+    int rename_flag = rename("tempBooksData.txt", "BooksData.txt");
+    if (rename_flag != 0)
+        puts("Unable to remove tempBooksData.txt");
+
+    rename_flag = rename("tempAuthorData.txt", "AuthorData.txt");
+    if (rename_flag != 0)
+        puts("Unable to remove tempBooksData.txt");
 }
+
+
 
 void delete_book_info()
 {
+    // ask user to enter book ID.
+    int given_book_id;
+    int author_id;
 
+    printf("\nEnter Book ID: ");
+    scanf("%d", &given_book_id);
+    getchar();
+
+    FILE* fBook;
+
+    fBook = fopen("BooksData.txt", "a+");
+
+    if (fBook == NULL) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
+
+    FILE* fAu;
+
+    fAu = fopen("AuthorData.txt", "w");
+
+    if (fAu != 0) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
+
+    FILE* temp_fBook;
+
+    temp_fBook = fopen("tempBooksData.txt", "w");
+
+    if (temp_fBook != 0) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
+
+    FILE* temp_fAu;
+
+    temp_fAu = fopen("tempAuthorData.txt", "w");
+
+    if (temp_fAu != 0) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
+
+
+    char line[300];
+    struct Books book;
+
+    while (fgets(line, 300, fBook) != NULL)
+    {
+        if (book.book_id == given_book_id)  continue;
+        
+
+        char seps[] = ",";
+        char* token = NULL;
+
+        token = strtok(line, seps);
+        strcpy(book.book_id, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.book_name, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.publication_date, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.publisher_name, token);
+
+        token = strtok(NULL, seps);
+        author_id = (int)token;
+
+        int flag = 0;
+
+        while(fgets(line, 300, fAu) != NULL)
+        {
+            token = strtok(line, seps);
+
+            if((int)token == author_id)
+            {
+                token = strtok(NULL, seps);
+                strcpy(book.author_name, token);
+
+                token = strtok(NULL, seps);
+                strcpy(book.author_address, token);
+
+                token = strtok(NULL, seps);
+                strcpy(book.author_phone_num, token);
+
+                token = strtok(NULL, seps);
+                strcpy(book.author_email_address, token);
+
+                token = strtok(NULL, seps);
+                strcpy(book.author_bio, token);
+
+                flag = 1;
+                break;
+            }
+        }
+
+        if(!flag) {
+            printf("Something went wrong. Terminate the process.");
+            exit(1);
+        }
+
+        token = strtok(NULL, seps);
+        strcpy(book.author_address, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.author_phone_num, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.author_email_address, token);
+
+        token = strtok(NULL, seps);
+        strcpy(book.author_bio, token);
+
+
+
+        fprintf(temp_fBook, "%d ,", book.book_id);
+        fprintf(temp_fBook, "%s ,", book.book_name);
+        fprintf(temp_fBook, "%s ,", book.publication_date);
+        fprintf(temp_fBook, "%s ,", book.publisher_name);
+
+        fprintf(temp_fAu, "%s ,", book.author_name);
+        fprintf(temp_fAu, "%s ,", book.author_address);
+        fprintf(temp_fAu, "%s ,", book.author_phone_num);
+        fprintf(temp_fAu, "%s ,", book.author_email_address);
+        fprintf(temp_fAu, "%s", book.author_bio);
+    }
+
+    fclose(fBook);
+    fclose(fAu);
+    fclose(temp_fBook);
+    fclose(temp_fAu);
+
+
+    int remove_flag = remove("BooksData.txt");
+    if (remove_flag != 0)
+        puts("Unable to remove BooksData.txt");
+
+    remove_flag = remove("AuthorData.txt");
+    if (remove_flag != 0)
+        puts("Unable to remove AuthorData.txt");
+
+
+    int rename_flag = rename("tempBooksData.txt", "BooksData.txt");
+    if (rename_flag != 0)
+        puts("Unable to remove tempBooksData.txt");
+
+    rename_flag = rename("tempAuthorData.txt", "AuthorData.txt");
+    if (rename_flag != 0)
+        puts("Unable to remove tempBooksData.txt");
 }
+
 
 void search_book_info()
 {
@@ -365,18 +1118,27 @@ void search_book_info()
     char bookName[20];
     gets(bookName);
 
-    FILE *fp;
-    fp = fopen("book_infos.txt", "a+");
+    FILE *fBook;
+    fBook = fopen("BooksData.txt", "a+");
 
-    if (fp == NULL) {
-        printf("Error! Opening File");
+    if (fBook == NULL) {
+        printf("Failed to opening flie. Terminate the program.");
+        exit(1);
+    }
+
+    FILE *fAu;
+    fBook = fopen("AuthorData.txt", "a+");
+
+    if (fAu == NULL) {
+        printf("Failed to opening flie. Terminate the program.");
         exit(1);
     }
 
     char line[60];
 
-    while(fgets(line, 60, fp) != NULL) {
-        char seps[] = " ";
+    while(fgets(line, 60, fBook) != NULL)
+    {
+        char seps[] = ",";
         char* token = NULL;
 
         token = strtok(line, seps);
@@ -386,313 +1148,10 @@ void search_book_info()
             puts(line);
         }
     }
-}
 
-void display_all_books()
-{
-    getchar();
-    printf("Enter Book Name : ");
-    char bookName[20];
-    gets(bookName);
-
-    FILE *fp;
-    fp = fopen("book_infos.txt", "a+");
-
-    if (fp == NULL) {
-        printf("Error! Opening File");
-        exit(1);
-    }
-
-    char line[60];
-
-    while(fgets(line, 60, fp) != NULL) {
-        puts(line);
-    }
+    fclose(fBook);
+    fclose(fAu);
 }
 
 
 
-
-
-
-
-
-
-
-
-// ---------------------------------------------------------------------
-
-/*
-
-// 1 ~ 7 기능 수행 함수
-void add_book_info()
-{
-    // Case 1 : Add book information
-    struct Book given_book;
-
-    bool is_given = false;
-
-
-    // Cheak if the given Book ID is unique and not a negative number
-    printf("Enter Book ID (MUST new and not a negative num) : ");
-    scanf("%d", &given_book.ID);
-
-    for(int i = 0; i < len; i++) {
-        // If ID is unique
-        if(given_book.ID == book[i].ID && given_book.ID >= 0)
-        {
-            printf("Already given ID. Terminate the process.\n\n");
-            is_given = true;
-            break;
-        }
-    }
-    if(is_given)
-        return;
-
-    // Continue the process if the Book ID is unique and not a negative number
-    printf("Available Book ID. (unique and not an negative number) Continue the process.\n");
-
-    update_book(given_book, len);
-
-    /*
-    printf("Enter Book Name : ");
-    scanf("%s", &given_book.name);
-
-    printf("Enter Publication Date (0000-00-00): ");
-    scanf("%s", &given_book.pub_date);
-
-    printf("Enter Publisher Name : ");
-    scanf("%s", &given_book.pub_name);
-
-    printf("Enter Publisher Phone Number (don't use dash(-)) : ");
-    scanf("%d", &given_book.pub_phone_num);
-
-    printf("Enter an Author Name : ");
-    scanf("%s", &given_book.author_name);
-
-    printf("Enter an Author Email Address : ");
-    scanf("%s", &given_book.author_email);
-    
-
-    // Add a Book Infomation into a structure
-    printf("Successfully added.\n\n");
-
-    book[len].ID = given_book.ID;
-    strcpy(book[len].name, given_book.name);
-    strcpy(book[len].pub_date, given_book.pub_date);
-    strcpy(book[len].pub_name, given_book.pub_name);
-    book[len].pub_phone_num = given_book.pub_phone_num;
-    strcpy(book[len].author_name, given_book.author_name);
-    strcpy(book[len].author_email, given_book.author_email);
-    */
-
-    len += 1;
-}
-
-
-void update_book_info()
-{
-    // Case 2 : Update book information By Book ID
-    int given_id;
-
-    printf("Enter a Book ID to update : ");
-    scanf("%d", &given_id);
-
-    char given_book_name;
-    int is_there = false;
-
-    struct Book given_new_book;
-
-    // Check if the given book ID is exist in the structure
-    for(int i = 0; i < 100; i++) {
-        if(given_id == book[i].ID)
-        {
-            printf("I found it.\n");
-
-            // Update Process
-            update_book(given_new_book, i);
-
-            /*
-            printf("Enter NEW Book ID : ");
-            scanf("%d", &given_new_book.ID);
-
-            printf("Enter NEW Book Name : ");
-            scanf("%s", &given_new_book.name);
-
-            printf("Enter NEW Publication Date (0000-00-00): ");
-            scanf("%s", &given_new_book.pub_date);
-
-            printf("Enter NEW Publisher Name : ");
-            scanf("%s", &given_new_book.pub_name);
-
-            printf("Enter NEW Publisher Phone Number (don't use dash(-)) : ");
-            scanf("%d", &given_new_book.pub_phone_num);
-
-            printf("Enter a NEW Author Name : ");
-            scanf("%s", &given_new_book.author_name);
-
-            printf("Enter a NEW Author Email Address : ");
-            scanf("%s", &given_new_book.author_email);
-
-
-            book[i].ID = given_new_book.ID;
-            strcpy(book[i].name, given_new_book.name);
-            strcpy(book[i].pub_date, given_new_book.pub_date);
-            strcpy(book[i].pub_name, given_new_book.pub_name);
-            book[i].pub_phone_num = given_new_book.pub_phone_num;
-            strcpy(book[i].author_name, given_new_book.author_name);
-            strcpy(book[i].author_email, given_new_book.author_email);
-            */
-
-            is_there = true;
-
-            printf("Update Completed\n\n");
-            return;
-        }
-    }
-
-    if(is_there == false)
-        printf("Failed to found the ID.\n\n");
-}
-
-
-void delete_book_info()
-{
-    // Case 3 : Delete Book Infomation
-    int given_id;
-    int is_there = false;
-    int idx;
-
-    printf("Enter Book ID to delete : ");
-    scanf("%d", &given_id);
-
-    for(int i = 0; i < 100; i++) {
-        if(given_id == book[i].ID)
-        {
-            is_there = true;
-            idx = i;
-            break;
-        }
-    }
-
-    if(is_there)
-    {   
-        for(int i = idx; i < len; i++)
-        {
-            book[i] = book[i+1];
-        }
-        len -= 1;
-        printf("Delete Completed\n\n");
-    }
-    else
-    {
-        printf("Failed to found the ID.\n\n");
-    }
-}
-
-
-void search_book_info()
-{
-    // Case 4 : Search book information By ID
-    int given_ID;
-    bool is_there = false;
-
-    printf("Enter a Book ID to search : ");
-    scanf("%d", &given_ID);
-
-    for(int i = 0; i < len; i++) {
-        if(given_ID == book[i].ID)
-        {
-            printf("Given Name is now on position %d.\n", i);
-            
-            display_book_info(i);
-            /*
-            printf("Book ID : %d\n", book[i].ID);
-            printf("Book Name : %s\n", book[i].name);
-            printf("Publication Date : %s\n", book[i].pub_date);
-            printf("Publisher Name : %s\n", book[i].pub_name);
-            printf("Publisher Phone Number : %d\n", book[i].pub_phone_num);
-            printf("Author Name : %s\n", book[i].author_name);
-            printf("Author Email Address : %s\n\n", book[i].author_email);
-            */
-            is_there = true;
-            break;
-        }
-    }
-    if(is_there == false)
-        printf("Given Name is NOT in the list.\n\n");
-}
-
-
-void display_books_by_author()
-{
-    // Case 5 : Display a list of book(s) published by an author a
-    char a[20];
-    printf("Enter a name of author to display : ");
-    scanf("%s", &a);
-
-    for(int i = 0; i < len; i++)
-    {
-        if(strcmp(a, book[i].author_name) == 0)
-        {
-            display_book_info(i);
-            /*
-            printf("Book ID : %d\n", book[i].ID);
-            printf("Book Name : %s\n", book[i].name);
-            printf("Publication Date : %s\n", book[i].pub_date);
-            printf("Publisher Name : %s\n", book[i].pub_name);
-            printf("Publisher Phone Number : %d\n", book[i].pub_phone_num);
-            printf("Author Name : %s\n", book[i].author_name);
-            printf("Author Email Address : %s\n\n", book[i].author_email);
-            */
-        }
-    }
-    printf("\n");
-}
-
-
-void display_books_by_publisher()
-{
-    // Case 6 : Display a list of book(s) published by a publisher p
-    char p[20];
-    printf("Enter a name of book to display : ");
-    scanf("%s", &p);
-
-    for(int i = 0; i < len; i++)
-    {
-        if(strcmp(p, book[i].pub_name) == 0)
-        {
-            display_book_info(i);
-            /*
-            printf("Book ID : %d\n", book[i].ID);
-            printf("Book Name : %s\n", book[i].name);
-            printf("Publication Date : %s\n", book[i].pub_date);
-            printf("Publisher Name : %s\n", book[i].pub_name);
-            printf("Publisher Phone Number : %d\n", book[i].pub_phone_num);
-            printf("Author Name : %s\n", book[i].author_name);
-            printf("Author Email Address : %s\n\n", book[i].author_email);
-            */
-        }
-    }
-    printf("\n");
-}
-
-
-void display_all_books()
-{
-    // Case 7 : Display a List of all Books
-    for(int i = 0; i < len; i++)
-    {
-        display_book_info(i);
-        /*
-        printf("Book ID : %d\n", book[i].ID);
-        printf("Book Name : %s\n", book[i].name);
-        printf("Publication Date : %s\n", book[i].pub_date);
-        printf("Publisher Name : %s\n", book[i].pub_name);
-        printf("Publisher Phone Number : %d\n", book[i].pub_phone_num);
-        printf("Author Name : %s\n", book[i].author_name);
-        printf("Author Email Address : %s\n\n", book[i].author_email);
-        */
-    }
-    printf("\n");
-}

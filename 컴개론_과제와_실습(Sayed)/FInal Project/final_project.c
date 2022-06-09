@@ -735,6 +735,7 @@ void search_author_info()
 }
 
 
+
 void add_book_info()
 {
     // Case 5 : Add book information
@@ -951,7 +952,6 @@ void update_book_info()
     if (rename_flag != 0)
         puts("Unable to remove tempBooksData.txt");
 }
-
 
 
 void delete_book_info()
